@@ -47,7 +47,6 @@
             padding: 20px;
         }
 
-        /* AUTENTICACIÓN */
         .auth-wrapper {
             width: 100%;
             display: flex;
@@ -81,6 +80,7 @@
         .input-group {
             margin-bottom: 18px;
             text-align: left;
+            position: relative;
         }
 
         .input-group label {
@@ -141,7 +141,6 @@
             text-decoration: underline;
         }
 
-        /* DASHBOARD PRINCIPAL */
         .app-content {
             display: none;
             width: 100%;
@@ -159,6 +158,8 @@
             border-radius: 16px;
             backdrop-filter: blur(12px);
             margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .server-brand {
@@ -179,8 +180,9 @@
 
         .user-economy {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .econ-badge {
@@ -211,7 +213,6 @@
             color: #fff;
         }
 
-        /* NAVEGACIÓN */
         .nav-tabs {
             display: flex;
             gap: 15px;
@@ -275,6 +276,21 @@
             gap: 25px;
         }
 
+        .suggestions-box {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #181c28;
+            border: 1px solid var(--accent);
+            border-radius: 0 0 10px 10px;
+            z-index: 99;
+            max-height: 180px;
+            overflow-y: auto;
+            display: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
         @media(max-width: 768px) {
             .bank-grid { grid-template-columns: 1fr; }
         }
@@ -287,6 +303,11 @@
         <div class="auth-container">
             <div class="auth-title" id="authTitle">UPRISING RP</div>
             
+            <div class="input-group" id="gamertagGroup" style="display: none;">
+                <label>GamerTag (Xbox / ID)</label>
+                <input type="text" id="authGamerTag" class="input-field" placeholder="ej. PlayerOneRP">
+            </div>
+
             <div class="input-group">
                 <label>Correo Electrónico</label>
                 <input type="email" id="authEmail" class="input-field" placeholder="usuario@uprising.com">
@@ -313,6 +334,7 @@
                 <div class="server-title">UPRISING RP</div>
             </div>
             <div class="user-economy">
+                <div class="econ-badge" style="border-color: var(--accent); color: var(--accent);"><i class="fa-solid fa-gamepad"></i> <span id="userGamerTag">Cargando...</span></div>
                 <div class="econ-badge"><i class="fa-solid fa-wallet" style="color: var(--accent-green);"></i> $<span id="userMoney">0</span></div>
                 <div class="econ-badge"><i class="fa-solid fa-coins" style="color: var(--zcoin);"></i> <span id="userZcoins">0</span> ZC</div>
                 <button class="btn-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Salir</button>
@@ -330,7 +352,7 @@
             <div class="card">
                 <h2 style="font-family: 'Orbitron'; margin-bottom: 15px; color: var(--accent);">Sistema Sincronizado en la Nube</h2>
                 <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;">
-                    Tu cuenta está conectada a Firebase (<code>basedeserverrp</code>). Tus fondos y progresos se guardan en tiempo real y están disponibles desde cualquier dispositivo.
+                    Tu cuenta está conectada a Firebase (<code>basedeserverrp</code>). Tus fondos y GamerTag están sincronizados en tiempo real.
                 </p>
                 <button class="btn-cyber" style="width: auto;" onclick="claimDailyReward()">Reclamar Recompensa Diaria (+1,000 $)</button>
             </div>
@@ -344,8 +366,9 @@
                     <h2 style="font-family: 'Orbitron'; margin-bottom: 15px; color: var(--accent);"><i class="fa-solid fa-paper-plane"></i> Transferir Fondos</h2>
                     
                     <div class="input-group">
-                        <label>Correo o ID del Destinatario</label>
-                        <input type="text" id="transferRecipient" class="input-field" placeholder="ej. amigo@uprising.com">
+                        <label>GamerTag del Destinatario</label>
+                        <input type="text" id="transferRecipient" class="input-field" placeholder="Escribe para buscar GamerTag..." oninput="searchGamerTags(this.value)" autocomplete="off">
+                        <div id="gamertagSuggestions" class="suggestions-box"></div>
                     </div>
 
                     <div class="input-group">
@@ -375,7 +398,7 @@
         </div>
     </div>
 
-    <!-- CARGA DE LÓGICA DE BANCO -->
+    <!-- CARGA DE LÓGICA BANCARIA -->
     <script src="bank.js"></script>
 
     <script>
@@ -397,28 +420,40 @@
 
         let isSignUp = false;
         let currentUser = null;
-        let userData = { money: 10000, zcoins: 200, email: "" };
+        let userData = { money: 10000, zcoins: 200, email: "", gamertag: "Invitado" };
 
         function toggleAuthMode() {
             isSignUp = !isSignUp;
             document.getElementById('authTitle').innerText = isSignUp ? "REGISTRO UPRISING" : "UPRISING RP";
             document.getElementById('authBtn').innerText = isSignUp ? "Crear Cuenta" : "Iniciar Sesión";
             document.getElementById('toggleText').innerText = isSignUp ? "¿Ya tienes cuenta? Inicia sesión" : "¿No tienes cuenta? Regístrate aquí";
+            document.getElementById('gamertagGroup').style.display = isSignUp ? "block" : "none";
         }
 
         async function handleAuth() {
             const email = document.getElementById('authEmail').value.trim();
             const password = document.getElementById('authPassword').value.trim();
+            const gamertag = document.getElementById('authGamerTag').value.trim();
 
             if (!email || !password) {
-                alert("Por favor completa los campos.");
+                alert("Por favor completa los campos obligatorios.");
+                return;
+            }
+
+            if (isSignUp && !gamertag) {
+                alert("Por favor ingresa tu GamerTag de Xbox/Juego.");
                 return;
             }
 
             try {
                 if (isSignUp) {
                     const res = await auth.createUserWithEmailAndPassword(email, password);
-                    userData.email = email;
+                    userData = {
+                        money: 10000,
+                        zcoins: 200,
+                        email: email,
+                        gamertag: gamertag
+                    };
                     await db.collection('users').doc(res.user.uid).set(userData);
                 } else {
                     await auth.signInWithEmailAndPassword(email, password);
@@ -444,7 +479,6 @@
                     }
                 });
 
-                // Iniciar escucha del historial bancario
                 listenTransactionHistory(user.uid);
 
             } else {
@@ -457,6 +491,7 @@
         function updateUI() {
             document.getElementById('userMoney').innerText = (userData.money || 0).toLocaleString();
             document.getElementById('userZcoins').innerText = (userData.zcoins || 0).toLocaleString();
+            document.getElementById('userGamerTag').innerText = userData.gamertag || "Sin Tag";
         }
 
         function switchTab(tabId, event) {
