@@ -2,9 +2,156 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Mi Web en GitHub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Sitio Increíble</title>
+    <!-- Íconos de FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Variables de Colores */
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Banner Principal (Hero) */
+        .hero {
+            text-align: center;
+            max-width: 800px;
+            margin-bottom: 50px;
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px rgba(6, 182, 212, 0.5);
+        }
+
+        /* Rejilla de Tarjetas */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.2);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            color: var(--accent-cyan);
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Animación de entrada */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-    <h1>¡Hola mundo! Mi página web funciona gratis en GitHub Pages.</h1>
+
+    <!-- Sección Principal -->
+    <section class="hero">
+        <h1 class="title">¡Bienvenido a Mi Sitio Web!</h1>
+        <p class="subtitle">Esta es una página alojada totalmente gratis con GitHub Pages y diseñada con un estilo moderno en Neón.</p>
+        <a href="#tarjetas" class="btn-primary"><i class="fa-solid fa-rocket"></i> Explorar Más</a>
+    </section>
+
+    <!-- Sección de Tarjetas -->
+    <div class="grid-container" id="tarjetas">
+        <div class="card">
+            <div class="card-icon"><i class="fa-solid fa-bolt"></i></div>
+            <h3>Rápido & Gratis</h3>
+            <p>Alojado en los servidores de GitHub con certificado SSL (HTTPS) incluido sin pagar nada.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon"><i class="fa-solid fa-palette"></i></div>
+            <h3>Diseño Moderno</h3>
+            <p>Uso de degradados, bordes redondeados y efectos CSS interactivos para dar vida al sitio.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon"><i class="fa-solid fa-mobile-screen-button"></i></div>
+            <h3>100% Responsivo</h3>
+            <p>Se adapta automáticamente a pantallas de celulares, tabletas y computadoras.</p>
+        </div>
+    </div>
+
 </body>
 </html>
