@@ -3,20 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grow Room - Roleplay System</title>
+    <title>UPRISING - Panel Principal</title>
+    <!-- FontAwesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
         :root {
-            --bg: #0b0f0d;
-            --panel: #131d16;
-            --accent: #10b981;
-            --accent-glow: rgba(16, 185, 129, 0.4);
-            --water: #38bdf8;
-            --nutrients: #f59e0b;
-            --danger: #ef4444;
+            --bg: #090a0f;
+            --panel: #12151e;
+            --accent: #00f0ff;
+            --accent-green: #10b981;
+            --accent-purple: #8b5cf6;
+            --zcoin: #f59e0b;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
         }
 
         * {
@@ -30,9 +33,9 @@
         body {
             background-color: var(--bg);
             background-image: 
-                radial-gradient(circle at 50% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 20% 80%, rgba(56, 189, 248, 0.05) 0%, transparent 40%);
-            color: #fff;
+                radial-gradient(circle at 50% 10%, rgba(0, 240, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 90%, rgba(139, 92, 246, 0.06) 0%, transparent 40%);
+            color: var(--text-light);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -40,389 +43,360 @@
             padding: 20px;
         }
 
+        /* HEADER / NAVBAR */
         header {
             width: 100%;
-            max-width: 900px;
+            max-width: 1200px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 15px 25px;
-            background: rgba(19, 29, 22, 0.8);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
+            background: rgba(18, 21, 30, 0.85);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .server-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .server-brand i {
+            font-size: 1.8rem;
+            color: var(--accent);
+            text-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+        }
+
+        .server-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .user-economy {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .econ-badge {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .econ-badge.money i { color: var(--accent-green); }
+        .econ-badge.zcoin i { color: var(--zcoin); }
+
+        /* NAVEGACIÓN DE SECCIONES */
+        .nav-tabs {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            gap: 15px;
             margin-bottom: 25px;
         }
 
-        .logo {
+        .tab-btn {
+            background: var(--panel);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            padding: 12px 25px;
+            border-radius: 12px;
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 900;
-            color: var(--accent);
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .container {
+        .tab-btn:hover {
+            border-color: var(--accent);
+            color: var(--text-light);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(139, 92, 246, 0.15));
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+        }
+
+        /* CONTENEDOR DE VISTAS */
+        .main-container {
             width: 100%;
-            max-width: 900px;
+            max-width: 1200px;
+        }
+
+        .view-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* TARJETAS Y PANELES */
+        .card {
+            background: var(--panel);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-light);
+        }
+
+        .card-title i { color: var(--accent); }
+
+        /* VISTA DISCORD LINK */
+        .discord-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 25px;
         }
 
-        @media (max-width: 768px) {
-            .container { grid-template-columns: 1fr; }
+        @media(max-width: 768px) {
+            .discord-grid { grid-template-columns: 1fr; }
         }
 
-        .card {
-            background: var(--panel);
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid rgba(255,255,255,0.08);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        .input-group {
+            margin-bottom: 20px;
         }
 
-        /* PLANTA ANIMADA */
-        .plant-stage-container {
-            width: 180px;
-            height: 180px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 20px 0;
-            border: 2px dashed rgba(16, 185, 129, 0.3);
-            position: relative;
-        }
-
-        .plant-icon {
-            font-size: 5rem;
-            color: var(--accent);
-            transition: all 0.5s ease;
-            text-shadow: 0 0 20px var(--accent-glow);
-        }
-
-        .plant-icon.pulse {
-            animation: pulsePlant 2s infinite ease-in-out;
-        }
-
-        @keyframes pulsePlant {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.08); filter: brightness(1.2); }
-        }
-
-        .stage-badge {
-            font-family: 'Orbitron', sans-serif;
+        .input-group label {
+            display: block;
             font-size: 0.9rem;
-            color: var(--accent);
-            background: rgba(16, 185, 129, 0.1);
-            padding: 5px 15px;
-            border-radius: 20px;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            margin-bottom: 10px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .input-field {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.12);
+            padding: 14px 18px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-field:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+        }
+
+        .btn-cyber {
+            background: linear-gradient(135deg, var(--accent), #0077ff);
+            color: #000;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
             text-transform: uppercase;
         }
 
-        /* BARRAS DE PROGRESO Y NUTRIENTES */
-        .stats-group {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin: 15px 0;
-        }
-
-        .stat-bar-container {
-            width: 100%;
-        }
-
-        .stat-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.95rem;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 10px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 5px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 100%;
-            transition: width 0.3s ease, background-color 0.3s;
-        }
-
-        #waterFill { background-color: var(--water); }
-        #nutrientsFill { background-color: var(--nutrients); }
-        #growthFill { background-color: var(--accent); }
-
-        /* ACCIONES */
-        .actions-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            width: 100%;
-            margin-top: 15px;
-        }
-
-        .btn-action {
-            padding: 12px;
-            border: none;
-            border-radius: 12px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-            font-size: 0.85rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s;
-            color: #000;
-        }
-
-        .btn-water { background: var(--water); }
-        .btn-feed { background: var(--nutrients); }
-        .btn-harvest { background: var(--accent); grid-column: span 2; display: none; }
-
-        .btn-action:hover {
+        .btn-cyber:hover {
             filter: brightness(1.2);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
             transform: translateY(-2px);
         }
 
-        .btn-action:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* INVENTARIO DE COSECHA */
-        .inventory-panel {
-            grid-column: span 1;
-        }
-
-        .inventory-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 100%;
-        }
-
-        .inventory-list {
-            width: 100%;
+        .discord-status-box {
+            background: rgba(88, 101, 242, 0.1);
+            border: 1px solid rgba(88, 101, 242, 0.3);
+            border-radius: 15px;
+            padding: 25px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            max-height: 320px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
-        .inventory-item {
-            background: rgba(255,255,255,0.03);
-            padding: 12px 15px;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            border-left: 4px solid var(--accent);
+            text-align: center;
+            gap: 15px;
         }
 
-        .item-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .discord-icon {
+            font-size: 4rem;
+            color: #5865F2;
+            text-shadow: 0 0 20px rgba(88, 101, 242, 0.4);
         }
 
-        .item-info i { font-size: 1.5rem; color: var(--accent); }
+        .code-display {
+            font-family: 'Orbitron', sans-serif;
+            background: rgba(0,0,0,0.5);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1.4rem;
+            color: var(--accent);
+            letter-spacing: 3px;
+            border: 1px dashed var(--accent);
+        }
     </style>
 </head>
 <body>
 
+    <!-- HEADER PRINCIPAL -->
     <header>
-        <div class="logo"><i class="fa-solid fa-cannabis"></i> GrowRoom RP</div>
-        <div style="font-family: 'Orbitron'; font-size: 0.9rem; color: #94a3b8;">Estado: <span id="roomStatus" style="color: var(--accent);">Activo</span></div>
+        <div class="server-brand">
+            <i class="fa-solid fa-shield-halved"></i>
+            <div class="server-title">UPRISING RP</div>
+        </div>
+        <div class="user-economy">
+            <div class="econ-badge money">
+                <i class="fa-solid fa-wallet"></i> $<span id="userMoney">15,400</span>
+            </div>
+            <div class="econ-badge zcoin">
+                <i class="fa-solid fa-coins"></i> <span id="userZcoins">250</span> ZC
+            </div>
+        </div>
     </header>
 
-    <div class="container">
-        <!-- CONTROL DE CULTIVO -->
-        <div class="card">
-            <div class="stage-badge" id="stageBadge">Fase: Semilla</div>
-            
-            <div class="plant-stage-container">
-                <i class="fa-solid fa-seedling plant-icon pulse" id="plantIcon"></i>
-            </div>
+    <!-- NAVEGACIÓN -->
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('home', event)"><i class="fa-solid fa-house"></i> Inicio</button>
+        <button class="tab-btn" onclick="switchTab('discord', event)"><i class="fa-brands fa-discord"></i> Vincular Discord</button>
+    </div>
 
-            <div class="stats-group">
-                <div class="stat-bar-container">
-                    <div class="stat-label"><span>Crecimiento</span> <span id="growthText">0%</span></div>
-                    <div class="progress-bar"><div class="progress-fill" id="growthFill" style="width: 0%;"></div></div>
-                </div>
+    <!-- CONTENIDO -->
+    <div class="main-container">
 
-                <div class="stat-bar-container">
-                    <div class="stat-label"><span>Agua / Humedad</span> <span id="waterText">100%</span></div>
-                    <div class="progress-bar"><div class="progress-fill" id="waterFill" style="width: 100%;"></div></div>
-                </div>
-
-                <div class="stat-bar-container">
-                    <div class="stat-label"><span>Nutrientes (N-P-K)</span> <span id="nutrientsText">100%</span></div>
-                    <div class="progress-bar"><div class="progress-fill" id="nutrientsFill" style="width: 100%;"></div></div>
-                </div>
-            </div>
-
-            <div class="actions-grid">
-                <button class="btn-action btn-water" onclick="waterPlant()"><i class="fa-solid fa-droplet"></i> Regar</button>
-                <button class="btn-action btn-feed" onclick="feedPlant()"><i class="fa-solid fa-flask"></i> Abonar</button>
-                <button class="btn-action btn-harvest" id="harvestBtn" onclick="harvestPlant()"><i class="fa-solid fa-scissors"></i> Cosechar Cogollos</button>
+        <!-- VISTA INICIO -->
+        <div id="home" class="view-section active">
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-terminal"></i> Bienvenido al Panel de Control</div>
+                <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;">
+                    Has ingresado al sistema central de UPRISING. Desde aquí podrás gestionar tus recursos, conectar tu cuenta de Discord y acceder a los módulos de juego automatizados.
+                </p>
+                <button class="btn-cyber" style="width: auto;" onclick="addTestReward()">Reclamar Bono Diario (+500 Dinero)</button>
             </div>
         </div>
 
-        <!-- INVENTARIO DE COSECHA -->
-        <div class="card inventory-panel">
-            <div class="inventory-title"><i class="fa-solid box"></i> Almacén de Cosecha (<span id="invCount">0</span>)</div>
-            <div class="inventory-list" id="inventoryList">
-                <div style="color: #64748b; text-align: center; margin-top: 40px; font-style: italic;">Sin cosechas aún. ¡Cuida tu planta hasta el 100%!</div>
+        <!-- VISTA VINCULAR DISCORD -->
+        <div id="discord" class="view-section">
+            <div class="discord-grid">
+                <div class="card">
+                    <div class="card-title"><i class="fa-solid fa-link"></i> Enlazar Cuenta</div>
+                    <div class="input-group">
+                        <label>Tu Discord Tag o ID de Usuario</label>
+                        <input type="text" id="discordInput" class="input-field" placeholder="ej. usuario#1234 o ID">
+                    </div>
+                    <button class="btn-cyber" onclick="generateDiscordCode()">Generar Código de Verificación</button>
+                </div>
+
+                <div class="card discord-status-box">
+                    <div class="discord-icon"><i class="fa-brands fa-discord"></i></div>
+                    <h3>Estado de Vinculación</h3>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">Genera tu código y envíaselo al bot en Discord con el comando <code>/vincular [código]</code>.</p>
+                    <div class="code-display" id="verifyCode">--------</div>
+                </div>
             </div>
         </div>
+
     </div>
 
     <script>
-        let growth = 0;
-        let water = 100;
-        let nutrients = 100;
-        let isReadyToHarvest = false;
-        let inventory = [];
+        // PERSISTENCIA DE DATOS CON LOCALSTORAGE (Simulando base de datos JSON local)
+        let userData = {
+            money: 15400,
+            zcoins: 250,
+            discordLinked: false,
+            discordTag: ""
+        };
 
-        const stages = [
-            { threshold: 0, name: "Semilla", icon: "fa-seedling" },
-            { threshold: 25, name: "Brote Joven", icon: "fa-spa" },
-            { threshold: 50, name: "Fase Vegetativa", icon: "fa-seedling" },
-            { threshold: 75, name: "Floración", icon: "fa-tree" },
-            { threshold: 100, name: "Lista para Cosechar", icon: "fa-cannabis" }
-        ];
-
-        // Bucle principal del juego (cada segundo la planta consume agua y nutrientes)
-        setInterval(() => {
-            if (isReadyToHarvest) return;
-
-            // Consumo de recursos
-            water = Math.max(0, water - 1.5);
-            nutrients = Math.max(0, nutrients - 1.0);
-
-            // Si hay agua y nutrientes, la planta crece
-            if (water > 10 && nutrients > 10) {
-                growth = Math.min(100, growth + 1.2);
-            } else {
-                // Si le falta agua o nutrientes, se detiene o se debilita
-                document.getElementById('roomStatus').innerText = "¡Alerta: Falta mantenimiento!";
-                document.getElementById('roomStatus').style.color = "var(--danger)";
+        // Cargar datos guardados si existen
+        function loadData() {
+            const saved = localStorage.getItem('uprising_user_data');
+            if (saved) {
+                userData = JSON.parse(saved);
             }
-
-            if(water > 10 && nutrients > 10) {
-                document.getElementById('roomStatus').innerText = "Óptimo";
-                document.getElementById('roomStatus').style.color = "var(--accent)";
-            }
-
-            updateUI();
-
-            // Verificar si llegó al 100%
-            if (growth >= 100 && !isReadyToHarvest) {
-                isReadyToHarvest = true;
-                document.getElementById('harvestBtn').style.display = 'flex';
-                document.getElementById('roomStatus').innerText = "¡Lista para Cosechar!";
-            }
-        }, 1000);
-
-        function waterPlant() {
-            water = 100;
-            updateUI();
+            updateEconomyUI();
         }
 
-        function feedPlant() {
-            nutrients = 100;
-            updateUI();
+        function saveData() {
+            localStorage.setItem('uprising_user_data', JSON.stringify(userData));
         }
 
-        function updateUI() {
-            document.getElementById('growthFill').style.width = growth + '%';
-            document.getElementById('growthText').innerText = Math.floor(growth) + '%';
+        function updateEconomyUI() {
+            document.getElementById('userMoney').innerText = userData.money.toLocaleString();
+            document.getElementById('userZcoins').innerText = userData.zcoins.toLocaleString();
+        }
 
-            document.getElementById('waterFill').style.width = water + '%';
-            document.getElementById('waterText').innerText = Math.floor(water) + '%';
+        function addTestReward() {
+            userData.money += 500;
+            saveData();
+            updateEconomyUI();
+            confetti({ particleCount: 80, spread: 60, origin: { y: 0.4 } });
+        }
 
-            document.getElementById('nutrientsFill').style.width = nutrients + '%';
-            document.getElementById('nutrientsText').innerText = Math.floor(nutrients) + '%';
+        // CAMBIO DE TABS / PESTAÑAS
+        function switchTab(tabId, event) {
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
 
-            // Actualizar etapa visual
-            let currentStage = stages[0];
-            for (let stage of stages) {
-                if (growth >= stage.threshold) currentStage = stage;
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // GENERADOR DE CÓDIGO DE DISCORD
+        function generateDiscordCode() {
+            const input = document.getElementById('discordInput').value.trim();
+            if (!input) {
+                alert("Por favor ingresa tu Discord Tag o ID.");
+                return;
             }
 
-            document.getElementById('stageBadge').innerText = `Fase: ${currentStage.name}`;
-            document.getElementById('plantIcon').className = `fa-solid ${currentStage.icon} plant-icon pulse`;
+            // Generar código aleatorio de 6 caracteres
+            const randomCode = 'UP-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            document.getElementById('verifyCode').innerText = randomCode;
+            
+            userData.discordTag = input;
+            saveData();
+
+            alert(`Código generado con éxito: ${randomCode}\nEnvíalo al bot de Discord en el servidor para completar la vinculación.`);
         }
 
-        function harvestPlant() {
-            // Calcular calidad de la cosecha basada en el cuidado
-            const qualityRand = Math.random() * 100;
-            let quality = "Estándar";
-            let color = "#38bdf8";
-
-            if (qualityRand < 15) {
-                quality = "Legendario (OG Kush Premium)";
-                color = "#f59e0b";
-            } else if (qualityRand < 45) {
-                quality = "Raro (Purple Haze)";
-                color = "#a855f7";
-            }
-
-            inventory.push({ name: quality, amount: Math.floor(Math.random() * 5) + 3, color: color });
-            updateInventory();
-
-            confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-
-            // Reiniciar ciclo de cultivo
-            growth = 0;
-            water = 100;
-            nutrients = 100;
-            isReadyToHarvest = false;
-            document.getElementById('harvestBtn').style.display = 'none';
-        }
-
-        function updateInventory() {
-            const list = document.getElementById('inventoryList');
-            document.getElementById('invCount').innerText = inventory.length;
-
-            list.innerHTML = inventory.map(item => `
-                <div class="inventory-item" style="border-left-color: ${item.color};">
-                    <div class="item-info">
-                        <i class="fa-solid fa-cannabis" style="color: ${item.color};"></i>
-                        <div>
-                            <div style="font-weight: bold; font-size: 0.95rem;">${item.name}</div>
-                            <div style="font-size: 0.8rem; color: #94a3b8;">Cantidad: ${item.amount} g</div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
+        // Inicializar al cargar
+        loadData();
     </script>
 </body>
 </html>
