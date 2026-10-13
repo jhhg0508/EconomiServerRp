@@ -3,14 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UPRISING RP - System Dashboard</title>
+    <title>CyberLoot - Mystery Boxes</title>
     <!-- FontAwesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -19,11 +15,11 @@
             --bg: #090a0f;
             --panel: #12151e;
             --accent: #00f0ff;
-            --accent-green: #10b981;
-            --accent-purple: #8b5cf6;
-            --zcoin: #f59e0b;
-            --text-light: #f8fafc;
-            --text-muted: #94a3b8;
+            --common: #b0c3d9;
+            --rare: #4b69ff;
+            --epic: #d32ce6;
+            --legendary: #ffaa00;
+            --mythic: #ff0055;
         }
 
         * {
@@ -37,496 +33,488 @@
         body {
             background-color: var(--bg);
             background-image: 
-                radial-gradient(circle at 50% 10%, rgba(0, 240, 255, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 90%, rgba(139, 92, 246, 0.06) 0%, transparent 40%);
-            color: var(--text-light);
+                radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(211, 44, 230, 0.08) 0%, transparent 50%);
+            color: #fff;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 20px;
-        }
-
-        .auth-wrapper {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 85vh;
-        }
-
-        .auth-container {
-            width: 100%;
-            max-width: 420px;
-            background: var(--panel);
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            border-radius: 20px;
-            padding: 35px;
-            box-shadow: 0 0 35px rgba(0, 240, 255, 0.15);
-            text-align: center;
-        }
-
-        .auth-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
-            margin-bottom: 25px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .input-group {
-            margin-bottom: 18px;
-            text-align: left;
-            position: relative;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-            font-weight: bold;
-        }
-
-        .input-field {
-            width: 100%;
-            background: rgba(0,0,0,0.4);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 12px 16px;
-            border-radius: 10px;
-            color: #fff;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .input-field:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 10px rgba(0,240,255,0.2);
-        }
-
-        .btn-cyber {
-            background: linear-gradient(135deg, var(--accent), #0077ff);
-            color: #000;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            cursor: pointer;
-            width: 100%;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            margin-top: 10px;
-        }
-
-        .btn-cyber:hover {
-            filter: brightness(1.2);
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
-            transform: translateY(-2px);
-        }
-
-        .auth-toggle {
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            cursor: pointer;
-        }
-
-        .auth-toggle span {
-            color: var(--accent);
-            text-decoration: underline;
-        }
-
-        .app-content {
-            display: none;
-            width: 100%;
-            max-width: 1200px;
+            overflow-x: hidden;
         }
 
         header {
             width: 100%;
+            max-width: 1100px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 25px;
-            background: rgba(18, 21, 30, 0.85);
+            padding: 20px;
+            background: rgba(18, 21, 30, 0.8);
             border: 1px solid rgba(0, 240, 255, 0.2);
-            border-radius: 16px;
-            backdrop-filter: blur(12px);
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 15px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
         }
 
-        .server-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .server-title {
+        .logo {
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             font-weight: 900;
-            background: linear-gradient(135deg, var(--accent), var(--accent-purple));
+            background: linear-gradient(90deg, var(--accent), #d32ce6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
             letter-spacing: 2px;
         }
 
-        .user-economy {
+        .user-stats {
             display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
+            gap: 15px;
         }
 
-        .econ-badge {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 8px 16px;
-            border-radius: 30px;
+        .stat-box {
+            background: rgba(255,255,255,0.05);
+            padding: 8px 18px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
             display: flex;
             align-items: center;
             gap: 8px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.95rem;
         }
 
-        .btn-logout {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid #ef4444;
-            color: #ef4444;
-            padding: 8px 15px;
+        .stat-box i { color: var(--accent); }
+
+        .btn-add-coins {
+            background: linear-gradient(135deg, #00ff88, #00b359);
+            color: #000;
+            border: none;
             border-radius: 20px;
-            cursor: pointer;
+            padding: 8px 16px;
+            font-family: 'Orbitron', sans-serif;
             font-weight: bold;
-            transition: 0.2s;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .btn-logout:hover {
-            background: #ef4444;
-            color: #fff;
+        .btn-add-coins:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
         }
 
-        .nav-tabs {
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .box-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            width: 100%;
+        }
+
+        .box-card {
+            background: var(--panel);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.08);
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .box-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px rgba(0, 240, 255, 0.2);
+        }
+
+        .box-icon {
+            font-size: 4.5rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .box-card.gold .box-icon {
+            color: var(--legendary);
+            text-shadow: 0 0 20px rgba(255, 170, 0, 0.5);
+        }
+
+        .box-card.cyber .box-icon {
+            color: var(--mythic);
+            text-shadow: 0 0 20px rgba(255, 0, 85, 0.5);
+        }
+
+        .box-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+
+        .box-price {
+            font-size: 1.2rem;
+            color: var(--legendary);
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .btn-open {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), #0077ff);
+            color: #000;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        .btn-open:hover {
+            filter: brightness(1.2);
+            box-shadow: 0 0 15px var(--accent);
+        }
+
+        .btn-open:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(1);
+        }
+
+        /* RULETA DE APERTURA */
+        .spinner-container {
+            width: 100%;
+            background: var(--panel);
+            border: 2px solid var(--accent);
+            border-radius: 20px;
+            padding: 20px 0;
+            position: relative;
+            overflow: hidden;
+            display: none;
+            box-shadow: 0 0 40px rgba(0, 240, 255, 0.3);
+        }
+
+        .spinner-pointer {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: var(--mythic);
+            box-shadow: 0 0 15px var(--mythic);
+            z-index: 10;
+        }
+
+        .spinner-track {
             display: flex;
             gap: 15px;
-            margin-bottom: 25px;
+            will-change: transform;
+            padding-left: 50%;
         }
 
-        .tab-btn {
-            background: var(--panel);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: var(--text-muted);
-            padding: 12px 25px;
+        .item-card {
+            min-width: 140px;
+            width: 140px;
+            height: 160px;
+            background: rgba(255,255,255,0.03);
             border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 4px solid var(--common);
+            padding: 10px;
+            text-align: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .item-card.common { border-color: var(--common); }
+        .item-card.rare { border-color: var(--rare); background: rgba(75, 105, 255, 0.1); }
+        .item-card.epic { border-color: var(--epic); background: rgba(211, 44, 230, 0.1); }
+        .item-card.legendary { border-color: var(--legendary); background: rgba(255, 170, 0, 0.1); }
+        .item-card.mythic { border-color: var(--mythic); background: rgba(255, 0, 85, 0.1); }
+
+        .item-icon { font-size: 2.5rem; }
+        .item-name { font-size: 0.9rem; font-weight: bold; }
+
+        /* INVENTARIO */
+        .inventory-section {
+            width: 100%;
+            background: var(--panel);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .inventory-title {
             font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.3s;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .tab-btn:hover {
-            border-color: var(--accent);
-            color: var(--text-light);
-            transform: translateY(-2px);
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(139, 92, 246, 0.15));
-            border-color: var(--accent);
-            color: var(--accent);
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
-        }
-
-        .view-section {
-            display: none;
-            animation: fadeIn 0.4s ease;
-        }
-
-        .view-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .card {
-            background: var(--panel);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-        }
-
-        .bank-grid {
+        .inventory-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-        }
-
-        .suggestions-box {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: #181c28;
-            border: 1px solid var(--accent);
-            border-radius: 0 0 10px 10px;
-            z-index: 99;
-            max-height: 180px;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 15px;
+            max-height: 300px;
             overflow-y: auto;
-            display: none;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
 
-        @media(max-width: 768px) {
-            .bank-grid { grid-template-columns: 1fr; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* MODAL */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background: var(--panel);
+            border: 2px solid var(--accent);
+            border-radius: 25px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .win-icon {
+            font-size: 5rem;
+            margin: 20px 0;
+        }
+
+        .win-rarity {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
         }
     </style>
 </head>
 <body>
 
-    <!-- PANTALLA DE ACCESO -->
-    <div class="auth-wrapper" id="authWrapper">
-        <div class="auth-container">
-            <div class="auth-title" id="authTitle">UPRISING RP</div>
-            
-            <div class="input-group" id="gamertagGroup" style="display: none;">
-                <label>GamerTag (Xbox / ID)</label>
-                <input type="text" id="authGamerTag" class="input-field" placeholder="ej. PlayerOneRP">
+    <header>
+        <div class="logo"><i class="fa-solid fa-cube"></i> CyberLoot</div>
+        <div class="user-stats">
+            <div class="stat-box"><i class="fa-solid fa-coins"></i> <span id="coins">1,000</span></div>
+            <button class="btn-add-coins" onclick="addCoins()"><i class="fa-solid fa-plus"></i> Monedas</button>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- TIENDA -->
+        <div class="box-grid">
+            <div class="box-card">
+                <div class="box-icon"><i class="fa-solid fa-box"></i></div>
+                <div class="box-title">Caja Estándar</div>
+                <div class="box-price"><i class="fa-solid fa-coins"></i> 100</div>
+                <button class="btn-open" onclick="startSpin('standard', 100)">Abrir Caja</button>
             </div>
 
-            <div class="input-group">
-                <label>Correo Electrónico</label>
-                <input type="email" id="authEmail" class="input-field" placeholder="usuario@uprising.com">
+            <div class="box-card gold">
+                <div class="box-icon"><i class="fa-solid fa-box-open"></i></div>
+                <div class="box-title">Caja Dorada</div>
+                <div class="box-price"><i class="fa-solid fa-coins"></i> 250</div>
+                <button class="btn-open" style="background: linear-gradient(135deg, #ffaa00, #ff5500);" onclick="startSpin('gold', 250)">Abrir Caja</button>
             </div>
 
-            <div class="input-group">
-                <label>Contraseña</label>
-                <input type="password" id="authPassword" class="input-field" placeholder="••••••••">
-            </div>
-
-            <button class="btn-cyber" id="authBtn" onclick="handleAuth()">Iniciar Sesión</button>
-
-            <div class="auth-toggle" onclick="toggleAuthMode()">
-                <span id="toggleText">¿No tienes cuenta? Regístrate aquí</span>
+            <div class="box-card cyber">
+                <div class="box-icon"><i class="fa-solid fa-vault"></i></div>
+                <div class="box-title">Caja Cyberpunk</div>
+                <div class="box-price"><i class="fa-solid fa-coins"></i> 500</div>
+                <button class="btn-open" style="background: linear-gradient(135deg, #ff0055, #9900ff); color: #fff;" onclick="startSpin('cyber', 500)">Abrir Caja</button>
             </div>
         </div>
+
+        <!-- RULETA -->
+        <div class="spinner-container" id="spinnerContainer">
+            <div class="spinner-pointer"></div>
+            <div class="spinner-track" id="spinnerTrack"></div>
+        </div>
+
+        <!-- INVENTARIO -->
+        <div class="inventory-section">
+            <div class="inventory-title"><i class="fa-solid fa-warehouse"></i> Tu Inventario (<span id="invCount">0</span>)</div>
+            <div class="inventory-grid" id="inventoryGrid"></div>
+        </div>
+
     </div>
 
-    <!-- PANEL PRINCIPAL -->
-    <div class="app-content" id="appContent">
-        <header>
-            <div class="server-brand">
-                <i class="fa-solid fa-shield-halved" style="color: var(--accent); font-size: 1.6rem;"></i>
-                <div class="server-title">UPRISING RP</div>
-            </div>
-            <div class="user-economy">
-                <div class="econ-badge" style="border-color: var(--accent); color: var(--accent);"><i class="fa-solid fa-gamepad"></i> <span id="userGamerTag">Cargando...</span></div>
-                <div class="econ-badge"><i class="fa-solid fa-wallet" style="color: var(--accent-green);"></i> $<span id="userMoney">0</span></div>
-                <div class="econ-badge"><i class="fa-solid fa-coins" style="color: var(--zcoin);"></i> <span id="userZcoins">0</span> ZC</div>
-                <button class="btn-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Salir</button>
-            </div>
-        </header>
-
-        <div class="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('home', event)"><i class="fa-solid fa-house"></i> Inicio</button>
-            <button class="tab-btn" onclick="switchTab('bank', event)"><i class="fa-solid fa-building-columns"></i> Banco Central</button>
-            <button class="tab-btn" onclick="switchTab('grow', event)"><i class="fa-solid fa-cannabis"></i> Cultivo RP</button>
-        </div>
-
-        <!-- VISTA INICIO -->
-        <div id="home" class="view-section active">
-            <div class="card">
-                <h2 style="font-family: 'Orbitron'; margin-bottom: 15px; color: var(--accent);">Sistema Sincronizado en la Nube</h2>
-                <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;">
-                    Tu cuenta está conectada a Firebase (<code>basedeserverrp</code>). Tus fondos y GamerTag están sincronizados en tiempo real.
-                </p>
-                <button class="btn-cyber" style="width: auto;" onclick="claimDailyReward()">Reclamar Recompensa Diaria (+1,000 $)</button>
-            </div>
-        </div>
-
-        <!-- VISTA BANCO CENTRAL -->
-        <div id="bank" class="view-section">
-            <div class="bank-grid">
-                <!-- FORMULARIO DE TRANSFERENCIA -->
-                <div class="card">
-                    <h2 style="font-family: 'Orbitron'; margin-bottom: 15px; color: var(--accent);"><i class="fa-solid fa-paper-plane"></i> Transferir Fondos</h2>
-                    
-                    <div class="input-group">
-                        <label>GamerTag del Destinatario</label>
-                        <input type="text" id="transferRecipient" class="input-field" placeholder="Escribe para buscar GamerTag..." oninput="searchGamerTags(this.value)" autocomplete="off">
-                        <div id="gamertagSuggestions" class="suggestions-box"></div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Monto a Transferir ($)</label>
-                        <input type="number" id="transferAmount" class="input-field" placeholder="1000">
-                    </div>
-
-                    <button class="btn-cyber" onclick="executeTransfer()">Enviar Dinero</button>
-                </div>
-
-                <!-- HISTORIAL DE TRANSACCIONES -->
-                <div class="card">
-                    <h2 style="font-family: 'Orbitron'; margin-bottom: 15px; color: var(--accent-purple);"><i class="fa-solid fa-clock-rotate-left"></i> Historial de Movimientos</h2>
-                    <div id="transactionHistoryList">
-                        <p style="color: var(--text-muted); font-size: 0.9rem;">Cargando historial...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- VISTA CULTIVO -->
-        <div id="grow" class="view-section">
-            <div class="card">
-                <h2 style="font-family: 'Orbitron'; margin-bottom: 15px; color: var(--accent-green);"><i class="fa-solid fa-cannabis"></i> Módulo GrowRoom</h2>
-                <p style="color: var(--text-muted); line-height: 1.6;">Próximamente: Integración del sistema de cultivo animado con sincronización directa en Firebase.</p>
-            </div>
+    <!-- MODAL -->
+    <div class="modal" id="winModal">
+        <div class="modal-content" id="modalContent">
+            <h2>¡RECOMPENSA OBTENIDA!</h2>
+            <div class="win-icon" id="winIcon"></div>
+            <div class="win-rarity" id="winRarity">Épico</div>
+            <h3 id="winName">Espada Neón</h3>
+            <button class="btn-open" style="margin-top: 25px;" onclick="closeModal()">Reclamar</button>
         </div>
     </div>
-
-    <!-- CARGA DE LÓGICA BANCARIA -->
-    <script src="bank.js"></script>
 
     <script>
-        // CONFIGURACIÓN OFICIAL DE FIREBASE
-        const firebaseConfig = {
-            apiKey: "AIzaSyAjUmOaVoSjI_OxmETMXT6gUP6mgcDbaZ8",
-            authDomain: "basedeserverrp.firebaseapp.com",
-            projectId: "basedeserverrp",
-            storageBucket: "basedeserverrp.firebasestorage.app",
-            messagingSenderId: "248363539963",
-            appId: "1:248363539963:web:5827cb814e3acb50e77f5e"
-        };
+        const items = [
+            { id: 1, name: "Pistola de Agua", icon: "fa-gun", rarity: "common", color: "var(--common)" },
+            { id: 2, name: "Botas de Cuero", icon: "fa-socks", rarity: "common", color: "var(--common)" },
+            { id: 3, name: "Escudo Madera", icon: "fa-shield-halved", rarity: "common", color: "var(--common)" },
+            { id: 4, name: "Rifle Láser", icon: "fa-bolt", rarity: "rare", color: "var(--rare)" },
+            { id: 5, name: "Casco Táctico", icon: "fa-mask", rarity: "rare", color: "var(--rare)" },
+            { id: 6, name: "Drone Recon", icon: "fa-plane-slash", rarity: "epic", color: "var(--epic)" },
+            { id: 7, name: "Katana Neón", icon: "fa-wand-magic-sparkles", rarity: "epic", color: "var(--epic)" },
+            { id: 8, name: "Moto Cyber", icon: "fa-motorcycle", rarity: "legendary", color: "var(--legendary)" },
+            { id: 9, name: "Dragón Digital", icon: "fa-dragon", rarity: "legendary", color: "var(--legendary)" },
+            { id: 10, name: "IA Consciente", icon: "fa-brain", rarity: "mythic", color: "var(--mythic)" }
+        ];
 
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        let coins = 1000;
+        let inventory = [];
+        let isSpinning = false;
 
-        let isSignUp = false;
-        let currentUser = null;
-        let userData = { money: 10000, zcoins: 200, email: "", gamertag: "Invitado" };
-
-        function toggleAuthMode() {
-            isSignUp = !isSignUp;
-            document.getElementById('authTitle').innerText = isSignUp ? "REGISTRO UPRISING" : "UPRISING RP";
-            document.getElementById('authBtn').innerText = isSignUp ? "Crear Cuenta" : "Iniciar Sesión";
-            document.getElementById('toggleText').innerText = isSignUp ? "¿Ya tienes cuenta? Inicia sesión" : "¿No tienes cuenta? Regístrate aquí";
-            document.getElementById('gamertagGroup').style.display = isSignUp ? "block" : "none";
+        function addCoins() {
+            coins += 500;
+            document.getElementById('coins').innerText = coins.toLocaleString();
         }
 
-        async function handleAuth() {
-            const email = document.getElementById('authEmail').value.trim();
-            const password = document.getElementById('authPassword').value.trim();
-            const gamertag = document.getElementById('authGamerTag').value.trim();
+        function getItemByRarity(boxType) {
+            const rand = Math.random() * 100;
+            let rarity = 'common';
 
-            if (!email || !password) {
-                alert("Por favor completa los campos obligatorios.");
-                return;
-            }
-
-            if (isSignUp && !gamertag) {
-                alert("Por favor ingresa tu GamerTag de Xbox/Juego.");
-                return;
-            }
-
-            try {
-                if (isSignUp) {
-                    const res = await auth.createUserWithEmailAndPassword(email, password);
-                    userData = {
-                        money: 10000,
-                        zcoins: 200,
-                        email: email,
-                        gamertag: gamertag
-                    };
-                    await db.collection('users').doc(res.user.uid).set(userData);
-                } else {
-                    await auth.signInWithEmailAndPassword(email, password);
-                }
-            } catch (error) {
-                alert("Error: " + error.message);
-            }
-        }
-
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                currentUser = user;
-                document.getElementById('authWrapper').style.display = 'none';
-                document.getElementById('appContent').style.display = 'block';
-
-                db.collection('users').doc(user.uid).onSnapshot((doc) => {
-                    if (doc.exists) {
-                        userData = doc.data();
-                        updateUI();
-                    } else {
-                        userData.email = user.email;
-                        db.collection('users').doc(user.uid).set(userData);
-                    }
-                });
-
-                listenTransactionHistory(user.uid);
-
+            if (boxType === 'cyber') {
+                if (rand < 8) rarity = 'mythic';
+                else if (rand < 25) rarity = 'legendary';
+                else if (rand < 55) rarity = 'epic';
+                else rarity = 'rare';
+            } else if (boxType === 'gold') {
+                if (rand < 3) rarity = 'mythic';
+                else if (rand < 15) rarity = 'legendary';
+                else if (rand < 40) rarity = 'epic';
+                else if (rand < 75) rarity = 'rare';
+                else rarity = 'common';
             } else {
-                currentUser = null;
-                document.getElementById('authWrapper').style.display = 'flex';
-                document.getElementById('appContent').style.display = 'none';
+                if (rand < 1) rarity = 'mythic';
+                else if (rand < 5) rarity = 'legendary';
+                else if (rand < 20) rarity = 'epic';
+                else if (rand < 50) rarity = 'rare';
+                else rarity = 'common';
             }
-        });
 
-        function updateUI() {
-            document.getElementById('userMoney').innerText = (userData.money || 0).toLocaleString();
-            document.getElementById('userZcoins').innerText = (userData.zcoins || 0).toLocaleString();
-            document.getElementById('userGamerTag').innerText = userData.gamertag || "Sin Tag";
+            const filtered = items.filter(i => i.rarity === rarity);
+            return filtered[Math.floor(Math.random() * filtered.length)];
         }
 
-        function switchTab(tabId, event) {
-            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        function startSpin(boxType, price) {
+            if (isSpinning) return;
+            if (coins < price) {
+                alert("¡No tienes suficientes monedas! Haz clic en '+ Monedas' arriba.");
+                return;
+            }
 
-            document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
+            coins -= price;
+            document.getElementById('coins').innerText = coins.toLocaleString();
+            isSpinning = true;
 
-        async function claimDailyReward() {
-            if (!currentUser) return;
-            userData.money = (userData.money || 0) + 1000;
+            const buttons = document.querySelectorAll('.btn-open');
+            buttons.forEach(btn => btn.disabled = true);
+
+            const spinnerContainer = document.getElementById('spinnerContainer');
+            const spinnerTrack = document.getElementById('spinnerTrack');
             
-            await db.collection('users').doc(currentUser.uid).update({ 
-                money: userData.money 
-            });
+            spinnerContainer.style.display = 'block';
+            spinnerTrack.style.transition = 'none';
+            spinnerTrack.style.transform = 'translateX(0px)';
 
-            confetti({ particleCount: 80, spread: 60, origin: { y: 0.5 } });
-        }
-
-        async function executeTransfer() {
-            const recipient = document.getElementById('transferRecipient').value.trim();
-            const amount = document.getElementById('transferAmount').value;
-
-            const success = await transferMoney(recipient, amount);
-            if (success) {
-                document.getElementById('transferRecipient').value = '';
-                document.getElementById('transferAmount').value = '';
-                confetti({ particleCount: 70, spread: 50, origin: { y: 0.6 } });
+            // Generar 50 objetos
+            const rouletteItems = [];
+            for (let i = 0; i < 50; i++) {
+                rouletteItems.push(getItemByRarity(boxType));
             }
+
+            const winningIndex = 42;
+            const winningItem = rouletteItems[winningIndex];
+
+            spinnerTrack.innerHTML = rouletteItems.map(item => `
+                <div class="item-card ${item.rarity}">
+                    <div class="item-icon" style="color: ${item.color}"><i class="fa-solid ${item.icon}"></i></div>
+                    <div class="item-name">${item.name}</div>
+                </div>
+            `).join('');
+
+            // Ancho del ítem (140px) + Gap (15px) = 155px
+            const itemWidth = 155;
+            const targetX = -(winningIndex * itemWidth) - 70; 
+
+            setTimeout(() => {
+                spinnerTrack.style.transition = 'transform 4.5s cubic-bezier(0.15, 0.9, 0.15, 1)';
+                spinnerTrack.style.transform = `translateX(${targetX}px)`;
+            }, 50);
+
+            setTimeout(() => {
+                isSpinning = false;
+                buttons.forEach(btn => btn.disabled = false);
+                showWinModal(winningItem);
+                inventory.push(winningItem);
+                updateInventoryUI();
+
+                if (['epic', 'legendary', 'mythic'].includes(winningItem.rarity)) {
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                }
+            }, 4700);
         }
 
-        function logout() {
-            auth.signOut();
+        function showWinModal(item) {
+            const modal = document.getElementById('winModal');
+            const modalContent = document.getElementById('modalContent');
+            
+            document.getElementById('winIcon').innerHTML = `<i class="fa-solid ${item.icon}" style="color: ${item.color}"></i>`;
+            document.getElementById('winRarity').innerText = item.rarity;
+            document.getElementById('winRarity').style.color = item.color;
+            document.getElementById('winName').innerText = item.name;
+            modalContent.style.borderColor = item.color;
+
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('winModal').style.display = 'none';
+        }
+
+        function updateInventoryUI() {
+            const grid = document.getElementById('inventoryGrid');
+            document.getElementById('invCount').innerText = inventory.length;
+
+            grid.innerHTML = inventory.map(item => `
+                <div class="item-card ${item.rarity}" style="min-width: unset; width: 100%; height: 110px;">
+                    <div class="item-icon" style="color: ${item.color}; font-size: 1.8rem;"><i class="fa-solid ${item.icon}"></i></div>
+                    <div class="item-name" style="font-size: 0.8rem;">${item.name}</div>
+                </div>
+            `).join('');
         }
     </script>
 </body>
