@@ -1,9 +1,72 @@
 // ==========================================
-// MÓDULO BANCARIO Y TRANSFERENCIAS - UPRISING RP
+// MÓDULO BANCARIO Y AUTOCOMPLETADO - UPRISING RP
 // ==========================================
 
-// Enviar dinero a otro usuario mediante su Correo o UID
-async function transferMoney(recipientIdentifier, amount) {
+// Búsqueda en tiempo real de GamerTags para el autocompletado
+async function searchGamerTags(inputVal) {
+    const suggestionsBox = document.getElementById('gamertagSuggestions');
+    if (!suggestionsBox) return;
+
+    const query = inputVal.trim();
+    if (query.length < 1) {
+        suggestionsBox.style.display = 'none';
+        suggestionsBox.innerHTML = '';
+        return;
+    }
+
+    try {
+        // Buscar usuarios cuyo gamertag empiece con el texto ingresado
+        const snapshot = await db.collection('users')
+            .where('gamertag', '>=', query)
+            .where('gamertag', '<=', query + '\uf8ff')
+            .limit(5)
+            .get();
+
+        suggestionsBox.innerHTML = '';
+
+        if (snapshot.empty) {
+            suggestionsBox.style.display = 'none';
+            return;
+        }
+
+        suggestionsBox.style.display = 'block';
+
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            // Ignorar al propio usuario
+            if (currentUser && doc.id === currentUser.uid) return;
+
+            const item = document.createElement('div');
+            item.style.cssText = `
+                padding: 10px 14px;
+                cursor: pointer;
+                border-bottom: 1px solid rgba(255,255,255,0.05);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                transition: background 0.2s;
+            `;
+            item.innerHTML = `
+                <span style="font-weight: bold; color: var(--accent);"><i class="fa-solid fa-gamepad"></i> ${data.gamertag}</span>
+            `;
+
+            item.onmouseover = () => item.style.background = 'rgba(0, 240, 255, 0.15)';
+            item.onmouseout = () => item.style.background = 'transparent';
+
+            item.onclick = () => {
+                document.getElementById('transferRecipient').value = data.gamertag;
+                suggestionsBox.style.display = 'none';
+            };
+
+            suggestionsBox.appendChild(item);
+        });
+    } catch (error) {
+        console.error("Error buscando GamerTags:", error);
+    }
+}
+
+// Enviar dinero a otro usuario por GamerTag o UID
+async function transferMoney(targetGamerTag, amount) {
     if (!currentUser) {
         alert("Debes estar autenticado para realizar transferencias.");
         return false;
@@ -15,33 +78,29 @@ async function transferMoney(recipientIdentifier, amount) {
         return false;
     }
 
-    if (userData.money < amount) {
-        alert("Saldo insuficiente. No tienes suficientes fondos para realizar esta transferencia.");
+    if ((userData.money || 0) < amount) {
+        alert("Saldo insuficiente para realizar esta transferencia.");
         return false;
     }
 
     try {
-        // Buscar al destinatario por correo electrónico
+        const cleanTag = targetGamerTag.trim();
         const usersRef = db.collection('users');
-        let recipientQuery = await usersRef.where(firebase.firestore.FieldPath.documentId(), '==', recipientIdentifier).get();
         
-        let recipientDoc = null;
-
-        if (!recipientQuery.empty) {
-            recipientDoc = recipientQuery.docs[0];
-        } else {
-            // Intentar buscar por coincidencia de email si no es UID directo
-            const emailQuery = await usersRef.where('email', '==', recipientIdentifier.toLowerCase().trim()).get();
-            if (!emailQuery.empty) {
-                recipientDoc = emailQuery.docs[0];
-            }
+        // Buscar por GamerTag exacto
+        let recipientQuery = await usersRef.where('gamertag', '==', cleanTag).get();
+        
+        // Fallback: Si ingresó correo o UID
+        if (recipientQuery.empty) {
+            recipientQuery = await usersRef.where('email', '==', cleanTag.toLowerCase()).get();
         }
 
-        if (!recipientDoc) {
-            alert("No se encontró ningún jugador registrado con esa cuenta o correo.");
+        if (recipientQuery.empty) {
+            alert(`No se encontró ningún jugador registrado con el GamerTag: "${cleanTag}".`);
             return false;
         }
 
+        const recipientDoc = recipientQuery.docs[0];
         const recipientId = recipientDoc.id;
 
         if (recipientId === currentUser.uid) {
@@ -49,7 +108,7 @@ async function transferMoney(recipientIdentifier, amount) {
             return false;
         }
 
-        // Transacción Atómica en Firebase (Transfiere el dinero de forma 100% segura)
+        // Transacción Atómica en Firebase
         await db.runTransaction(async (transaction) => {
             const senderRef = db.collection('users').doc(currentUser.uid);
             const receiverRef = db.collection('users').doc(recipientId);
@@ -57,48 +116,47 @@ async function transferMoney(recipientIdentifier, amount) {
             const senderDoc = await transaction.get(senderRef);
             const receiverDoc = await transaction.get(receiverRef);
 
-            if (!senderDoc.exists) throw "Tu cuenta no existe en la base de datos.";
-            if (!receiverDoc.exists) throw "La cuenta del destinatario ya no existe.";
+            if (!senderDoc.exists) throw "Tu cuenta no existe.";
+            if (!receiverDoc.exists) throw "El destinatario no existe.";
 
             const currentSenderMoney = senderDoc.data().money || 0;
             if (currentSenderMoney < amount) throw "Saldo insuficiente al procesar.";
 
             const currentReceiverMoney = receiverDoc.data().money || 0;
 
-            // Actualizar saldos
             transaction.update(senderRef, { money: currentSenderMoney - amount });
             transaction.update(receiverRef, { money: currentReceiverMoney + amount });
 
-            // Registrar movimiento en el historial del remitente
+            // Historial Remitente
             const senderHistoryRef = senderRef.collection('transactions').doc();
             transaction.set(senderHistoryRef, {
                 type: 'ENVIADO',
                 amount: amount,
-                target: recipientDoc.data().email || recipientId,
+                target: recipientDoc.data().gamertag || cleanTag,
                 date: firebase.firestore.FieldValue.serverTimestamp()
             });
 
-            // Registrar movimiento en el historial del destinatario
+            // Historial Destinatario
             const receiverHistoryRef = receiverRef.collection('transactions').doc();
             transaction.set(receiverHistoryRef, {
                 type: 'RECIBIDO',
                 amount: amount,
-                from: currentUser.email || currentUser.uid,
+                from: userData.gamertag || currentUser.email,
                 date: firebase.firestore.FieldValue.serverTimestamp()
             });
         });
 
-        alert(`¡Transferencia de $${amount.toLocaleString()} realizada con éxito!`);
+        alert(`¡Transferencia de $${amount.toLocaleString()} a ${recipientDoc.data().gamertag || cleanTag} realizada con éxito!`);
         return true;
 
     } catch (error) {
         console.error("Error en la transferencia:", error);
-        alert("Ocurrió un error en la transacción: " + error);
+        alert("Ocurrió un error: " + error);
         return false;
     }
 }
 
-// Escuchar e Historial de Transacciones en tiempo real
+// Historial en tiempo real
 function listenTransactionHistory(userId) {
     const historyList = document.getElementById('transactionHistoryList');
     if (!historyList) return;
@@ -119,7 +177,6 @@ function listenTransactionHistory(userId) {
                 const dateStr = data.date ? new Date(data.date.toDate()).toLocaleString() : 'Reciente';
 
                 const item = document.createElement('div');
-                item.className = 'history-item';
                 item.style.cssText = `
                     display: flex;
                     justify-content: space-between;
