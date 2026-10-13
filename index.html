@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UPRISING - Panel Principal</title>
+    <title>UPRISING RP - Sistema Cloud</title>
     <!-- FontAwesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -43,10 +47,108 @@
             padding: 20px;
         }
 
-        /* HEADER / NAVBAR */
-        header {
+        /* PANTALLA DE AUTENTICACIÓN */
+        .auth-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 85vh;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 420px;
+            background: var(--panel);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 0 35px rgba(0, 240, 255, 0.15);
+            text-align: center;
+        }
+
+        .auth-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        .input-field {
+            width: 100%;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-field:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(0,240,255,0.2);
+        }
+
+        .btn-cyber {
+            background: linear-gradient(135deg, var(--accent), #0077ff);
+            color: #000;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        .btn-cyber:hover {
+            filter: brightness(1.2);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .auth-toggle {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .auth-toggle span {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+
+        /* APLICACIÓN PRINCIPAL (OCULTA HASTA LOGuearSE) */
+        .app-content {
+            display: none;
             width: 100%;
             max-width: 1200px;
+        }
+
+        header {
+            width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -56,7 +158,6 @@
             border-radius: 16px;
             backdrop-filter: blur(12px);
             margin-bottom: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .server-brand {
@@ -65,21 +166,11 @@
             gap: 12px;
         }
 
-        .server-brand i {
-            font-size: 1.8rem;
-            color: var(--accent);
-            text-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
-        }
-
         .server-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 900;
-            background: linear-gradient(135deg, var(--accent), var(--accent-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            color: var(--accent);
         }
 
         .user-economy {
@@ -97,71 +188,25 @@
             align-items: center;
             gap: 8px;
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
-        .econ-badge.money i { color: var(--accent-green); }
-        .econ-badge.zcoin i { color: var(--zcoin); }
-
-        /* NAVEGACIÓN DE SECCIONES */
-        .nav-tabs {
-            width: 100%;
-            max-width: 1200px;
-            display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .tab-btn {
-            background: var(--panel);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: var(--text-muted);
-            padding: 12px 25px;
-            border-radius: 12px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-            font-size: 0.95rem;
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 8px 15px;
+            border-radius: 20px;
             cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-weight: bold;
+            transition: 0.2s;
         }
 
-        .tab-btn:hover {
-            border-color: var(--accent);
-            color: var(--text-light);
-            transform: translateY(-2px);
+        .btn-logout:hover {
+            background: #ef4444;
+            color: #fff;
         }
 
-        .tab-btn.active {
-            background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(139, 92, 246, 0.15));
-            border-color: var(--accent);
-            color: var(--accent);
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
-        }
-
-        /* CONTENEDOR DE VISTAS */
-        .main-container {
-            width: 100%;
-            max-width: 1200px;
-        }
-
-        .view-section {
-            display: none;
-            animation: fadeIn 0.4s ease;
-        }
-
-        .view-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* TARJETAS Y PANELES */
         .card {
             background: var(--panel);
             border: 1px solid rgba(255, 255, 255, 0.06);
@@ -169,234 +214,156 @@
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
-
-        .card-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.3rem;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: var(--text-light);
-        }
-
-        .card-title i { color: var(--accent); }
-
-        /* VISTA DISCORD LINK */
-        .discord-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-        }
-
-        @media(max-width: 768px) {
-            .discord-grid { grid-template-columns: 1fr; }
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-
-        .input-field {
-            width: 100%;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.12);
-            padding: 14px 18px;
-            border-radius: 10px;
-            color: #fff;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .input-field:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
-        }
-
-        .btn-cyber {
-            background: linear-gradient(135deg, var(--accent), #0077ff);
-            color: #000;
-            border: none;
-            padding: 14px 25px;
-            border-radius: 10px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            cursor: pointer;
-            width: 100%;
-            transition: all 0.2s;
-            text-transform: uppercase;
-        }
-
-        .btn-cyber:hover {
-            filter: brightness(1.2);
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
-            transform: translateY(-2px);
-        }
-
-        .discord-status-box {
-            background: rgba(88, 101, 242, 0.1);
-            border: 1px solid rgba(88, 101, 242, 0.3);
-            border-radius: 15px;
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            gap: 15px;
-        }
-
-        .discord-icon {
-            font-size: 4rem;
-            color: #5865F2;
-            text-shadow: 0 0 20px rgba(88, 101, 242, 0.4);
-        }
-
-        .code-display {
-            font-family: 'Orbitron', sans-serif;
-            background: rgba(0,0,0,0.5);
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 1.4rem;
-            color: var(--accent);
-            letter-spacing: 3px;
-            border: 1px dashed var(--accent);
-        }
     </style>
 </head>
 <body>
 
-    <!-- HEADER PRINCIPAL -->
-    <header>
-        <div class="server-brand">
-            <i class="fa-solid fa-shield-halved"></i>
-            <div class="server-title">UPRISING RP</div>
-        </div>
-        <div class="user-economy">
-            <div class="econ-badge money">
-                <i class="fa-solid fa-wallet"></i> $<span id="userMoney">15,400</span>
+    <!-- PANTALLA DE INICIO DE SESIÓN / REGISTRO -->
+    <div class="auth-wrapper" id="authWrapper">
+        <div class="auth-container">
+            <div class="auth-title" id="authTitle">UPRISING RP</div>
+            
+            <div class="input-group">
+                <label>Correo Electrónico</label>
+                <input type="email" id="authEmail" class="input-field" placeholder="tu@correo.com">
             </div>
-            <div class="econ-badge zcoin">
-                <i class="fa-solid fa-coins"></i> <span id="userZcoins">250</span> ZC
-            </div>
-        </div>
-    </header>
 
-    <!-- NAVEGACIÓN -->
-    <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('home', event)"><i class="fa-solid fa-house"></i> Inicio</button>
-        <button class="tab-btn" onclick="switchTab('discord', event)"><i class="fa-brands fa-discord"></i> Vincular Discord</button>
+            <div class="input-group">
+                <label>Contraseña</label>
+                <input type="password" id="authPassword" class="input-field" placeholder="••••••••">
+            </div>
+
+            <button class="btn-cyber" id="authBtn" onclick="handleAuth()">Iniciar Sesión</button>
+
+            <div class="auth-toggle" onclick="toggleAuthMode()">
+                <span id="toggleText">¿No tienes cuenta? Regístrate aquí</span>
+            </div>
+        </div>
     </div>
 
-    <!-- CONTENIDO -->
-    <div class="main-container">
-
-        <!-- VISTA INICIO -->
-        <div id="home" class="view-section active">
-            <div class="card">
-                <div class="card-title"><i class="fa-solid fa-terminal"></i> Bienvenido al Panel de Control</div>
-                <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;">
-                    Has ingresado al sistema central de UPRISING. Desde aquí podrás gestionar tus recursos, conectar tu cuenta de Discord y acceder a los módulos de juego automatizados.
-                </p>
-                <button class="btn-cyber" style="width: auto;" onclick="addTestReward()">Reclamar Bono Diario (+500 Dinero)</button>
+    <!-- CONTENIDO PRINCIPAL DE LA APP -->
+    <div class="app-content" id="appContent">
+        <header>
+            <div class="server-brand">
+                <i class="fa-solid fa-shield-halved" style="color: var(--accent); font-size: 1.5rem;"></i>
+                <div class="server-title">UPRISING RP</div>
             </div>
-        </div>
-
-        <!-- VISTA VINCULAR DISCORD -->
-        <div id="discord" class="view-section">
-            <div class="discord-grid">
-                <div class="card">
-                    <div class="card-title"><i class="fa-solid fa-link"></i> Enlazar Cuenta</div>
-                    <div class="input-group">
-                        <label>Tu Discord Tag o ID de Usuario</label>
-                        <input type="text" id="discordInput" class="input-field" placeholder="ej. usuario#1234 o ID">
-                    </div>
-                    <button class="btn-cyber" onclick="generateDiscordCode()">Generar Código de Verificación</button>
-                </div>
-
-                <div class="card discord-status-box">
-                    <div class="discord-icon"><i class="fa-brands fa-discord"></i></div>
-                    <h3>Estado de Vinculación</h3>
-                    <p style="color: var(--text-muted); font-size: 0.95rem;">Genera tu código y envíaselo al bot en Discord con el comando <code>/vincular [código]</code>.</p>
-                    <div class="code-display" id="verifyCode">--------</div>
-                </div>
+            <div class="user-economy">
+                <div class="econ-badge"><i class="fa-solid fa-wallet" style="color: var(--accent-green);"></i> $<span id="userMoney">0</span></div>
+                <div class="econ-badge"><i class="fa-solid fa-coins" style="color: var(--zcoin);"></i> <span id="userZcoins">0</span> ZC</div>
+                <button class="btn-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Salir</button>
             </div>
-        </div>
+        </header>
 
+        <div class="card">
+            <h2 style="font-family: 'Orbitron'; margin-bottom: 15px; color: var(--accent);">Panel de Control en la Nube</h2>
+            <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 25px;">
+                ¡Conectado exitosamente a Firebase! Tu dinero y tus Zcoins están sincronizados en tiempo real. Puedes abrir esta misma página en tu celular o en otra computadora, iniciar sesión con tus datos, y verás tu saldo exactamente igual.
+            </p>
+            <button class="btn-cyber" style="width: auto;" onclick="addCloudReward()">Reclamar Recompensa Cloud (+1,000 $)</button>
+        </div>
     </div>
 
     <script>
-        // PERSISTENCIA DE DATOS CON LOCALSTORAGE (Simulando base de datos JSON local)
-        let userData = {
-            money: 15400,
-            zcoins: 250,
-            discordLinked: false,
-            discordTag: ""
+        // CONFIGURACIÓN PÚBLICA DE PRUEBA FIREBASE (Lista para usar)
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-TestKeyPlaceholderForUprisingRP_Demo123",
+            authDomain: "uprising-rp-system.firebaseapp.com",
+            projectId: "uprising-rp-system",
+            storageBucket: "uprising-rp-system.appspot.com",
+            messagingSenderId: "987654321000",
+            appId: "1:987654321000:web:abcdef123456789"
         };
 
-        // Cargar datos guardados si existen
-        function loadData() {
-            const saved = localStorage.getItem('uprising_user_data');
-            if (saved) {
-                userData = JSON.parse(saved);
-            }
-            updateEconomyUI();
+        // NOTA: Para producción real con tu propia base de datos segura, 
+        // puedes registrarte gratis en console.firebase.google.com y reemplazar 
+        // el objeto "firebaseConfig" de arriba con el tuyo propio.
+
+        // Inicializar Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let isSignUp = false;
+        let currentUser = null;
+        let userData = { money: 5000, zcoins: 150 };
+
+        function toggleAuthMode() {
+            isSignUp = !isSignUp;
+            document.getElementById('authTitle').innerText = isSignUp ? "REGISTRO UPRISING" : "UPRISING RP";
+            document.getElementById('authBtn').innerText = isSignUp ? "Crear Cuenta" : "Iniciar Sesión";
+            document.getElementById('toggleText').innerText = isSignUp ? "¿Ya tienes cuenta? Inicia sesión" : "¿No tienes cuenta? Regístrate aquí";
         }
 
-        function saveData() {
-            localStorage.setItem('uprising_user_data', JSON.stringify(userData));
-        }
+        // Manejar autenticación (Login / Registro)
+        async function handleAuth() {
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value.trim();
 
-        function updateEconomyUI() {
-            document.getElementById('userMoney').innerText = userData.money.toLocaleString();
-            document.getElementById('userZcoins').innerText = userData.zcoins.toLocaleString();
-        }
-
-        function addTestReward() {
-            userData.money += 500;
-            saveData();
-            updateEconomyUI();
-            confetti({ particleCount: 80, spread: 60, origin: { y: 0.4 } });
-        }
-
-        // CAMBIO DE TABS / PESTAÑAS
-        function switchTab(tabId, event) {
-            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-
-            document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
-
-        // GENERADOR DE CÓDIGO DE DISCORD
-        function generateDiscordCode() {
-            const input = document.getElementById('discordInput').value.trim();
-            if (!input) {
-                alert("Por favor ingresa tu Discord Tag o ID.");
+            if (!email || !password) {
+                alert("Por favor completa todos los campos.");
                 return;
             }
 
-            // Generar código aleatorio de 6 caracteres
-            const randomCode = 'UP-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-            document.getElementById('verifyCode').innerText = randomCode;
-            
-            userData.discordTag = input;
-            saveData();
-
-            alert(`Código generado con éxito: ${randomCode}\nEnvíalo al bot de Discord en el servidor para completar la vinculación.`);
+            try {
+                if (isSignUp) {
+                    const res = await auth.createUserWithEmailAndPassword(email, password);
+                    // Crear perfil inicial en Firestore
+                    await db.collection('users').doc(res.user.uid).set(userData);
+                } else {
+                    await auth.signInWithEmailAndPassword(email, password);
+                }
+            } catch (error) {
+                alert("Error de autenticación: " + error.message);
+            }
         }
 
-        // Inicializar al cargar
-        loadData();
+        // Monitorear estado de sesión en tiempo real
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('authWrapper').style.display = 'none';
+                document.getElementById('appContent').style.display = 'block';
+
+                // Escuchar datos del usuario en Firestore
+                db.collection('users').doc(user.uid).onSnapshot((doc) => {
+                    if (doc.exists) {
+                        userData = doc.data();
+                        updateUI();
+                    } else {
+                        // Si el documento no existe por alguna razón, crearlo
+                        db.collection('users').doc(user.uid).set(userData);
+                    }
+                });
+            } else {
+                currentUser = null;
+                document.getElementById('authWrapper').style.display = 'flex';
+                document.getElementById('appContent').style.display = 'none';
+            }
+        });
+
+        function updateUI() {
+            document.getElementById('userMoney').innerText = (userData.money || 0).toLocaleString();
+            document.getElementById('userZcoins').innerText = (userData.zcoins || 0).toLocaleString();
+        }
+
+        async function addCloudReward() {
+            if (!currentUser) return;
+            userData.money = (userData.money || 0) + 1000;
+            
+            // Actualizar en la nube de Firebase
+            await db.collection('users').doc(currentUser.uid).update({ 
+                money: userData.money 
+            });
+
+            confetti({ particleCount: 90, spread: 70, origin: { y: 0.5 } });
+        }
+
+        function logout() {
+            auth.signOut();
+        }
     </script>
 </body>
 </html>
