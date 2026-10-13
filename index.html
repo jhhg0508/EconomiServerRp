@@ -268,6 +268,16 @@
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
+
+        .bank-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media(max-width: 768px) {
+            .bank-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -311,6 +321,7 @@
 
         <div class="nav-tabs">
             <button class="tab-btn active" onclick="switchTab('home', event)"><i class="fa-solid fa-house"></i> Inicio</button>
+            <button class="tab-btn" onclick="switchTab('bank', event)"><i class="fa-solid fa-building-columns"></i> Banco Central</button>
             <button class="tab-btn" onclick="switchTab('grow', event)"><i class="fa-solid fa-cannabis"></i> Cultivo RP</button>
         </div>
 
@@ -325,14 +336,47 @@
             </div>
         </div>
 
+        <!-- VISTA BANCO CENTRAL -->
+        <div id="bank" class="view-section">
+            <div class="bank-grid">
+                <!-- FORMULARIO DE TRANSFERENCIA -->
+                <div class="card">
+                    <h2 style="font-family: 'Orbitron'; margin-bottom: 15px; color: var(--accent);"><i class="fa-solid fa-paper-plane"></i> Transferir Fondos</h2>
+                    
+                    <div class="input-group">
+                        <label>Correo o ID del Destinatario</label>
+                        <input type="text" id="transferRecipient" class="input-field" placeholder="ej. amigo@uprising.com">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Monto a Transferir ($)</label>
+                        <input type="number" id="transferAmount" class="input-field" placeholder="1000">
+                    </div>
+
+                    <button class="btn-cyber" onclick="executeTransfer()">Enviar Dinero</button>
+                </div>
+
+                <!-- HISTORIAL DE TRANSACCIONES -->
+                <div class="card">
+                    <h2 style="font-family: 'Orbitron'; margin-bottom: 15px; color: var(--accent-purple);"><i class="fa-solid fa-clock-rotate-left"></i> Historial de Movimientos</h2>
+                    <div id="transactionHistoryList">
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Cargando historial...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- VISTA CULTIVO -->
         <div id="grow" class="view-section">
             <div class="card">
-                <h2 style="font-family: 'Orbitron'; margin-bottom: 15px; color: var(--accent-green);"><i class="fa-solid fa-cannabis"></i> Modulo GrowRoom</h2>
+                <h2 style="font-family: 'Orbitron'; margin-bottom: 15px; color: var(--accent-green);"><i class="fa-solid fa-cannabis"></i> Módulo GrowRoom</h2>
                 <p style="color: var(--text-muted); line-height: 1.6;">Próximamente: Integración del sistema de cultivo animado con sincronización directa en Firebase.</p>
             </div>
         </div>
     </div>
+
+    <!-- CARGA DE LÓGICA DE BANCO -->
+    <script src="bank.js"></script>
 
     <script>
         // CONFIGURACIÓN OFICIAL DE FIREBASE
@@ -353,7 +397,7 @@
 
         let isSignUp = false;
         let currentUser = null;
-        let userData = { money: 10000, zcoins: 200 };
+        let userData = { money: 10000, zcoins: 200, email: "" };
 
         function toggleAuthMode() {
             isSignUp = !isSignUp;
@@ -374,6 +418,7 @@
             try {
                 if (isSignUp) {
                     const res = await auth.createUserWithEmailAndPassword(email, password);
+                    userData.email = email;
                     await db.collection('users').doc(res.user.uid).set(userData);
                 } else {
                     await auth.signInWithEmailAndPassword(email, password);
@@ -394,9 +439,14 @@
                         userData = doc.data();
                         updateUI();
                     } else {
+                        userData.email = user.email;
                         db.collection('users').doc(user.uid).set(userData);
                     }
                 });
+
+                // Iniciar escucha del historial bancario
+                listenTransactionHistory(user.uid);
+
             } else {
                 currentUser = null;
                 document.getElementById('authWrapper').style.display = 'flex';
@@ -426,6 +476,18 @@
             });
 
             confetti({ particleCount: 80, spread: 60, origin: { y: 0.5 } });
+        }
+
+        async function executeTransfer() {
+            const recipient = document.getElementById('transferRecipient').value.trim();
+            const amount = document.getElementById('transferAmount').value;
+
+            const success = await transferMoney(recipient, amount);
+            if (success) {
+                document.getElementById('transferRecipient').value = '';
+                document.getElementById('transferAmount').value = '';
+                confetti({ particleCount: 70, spread: 50, origin: { y: 0.6 } });
+            }
         }
 
         function logout() {
