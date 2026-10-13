@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UPRISING RP - Sistema Cloud</title>
+    <title>UPRISING RP - System Dashboard</title>
     <!-- FontAwesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
@@ -47,7 +47,7 @@
             padding: 20px;
         }
 
-        /* PANTALLA DE AUTENTICACIÓN */
+        /* AUTENTICACIÓN */
         .auth-wrapper {
             width: 100%;
             display: flex;
@@ -75,6 +75,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .input-group {
@@ -140,7 +141,7 @@
             text-decoration: underline;
         }
 
-        /* APLICACIÓN PRINCIPAL (OCULTA HASTA LOGuearSE) */
+        /* DASHBOARD PRINCIPAL */
         .app-content {
             display: none;
             width: 100%;
@@ -168,9 +169,12 @@
 
         .server-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 900;
-            color: var(--accent);
+            background: linear-gradient(135deg, var(--accent), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
         }
 
         .user-economy {
@@ -188,7 +192,7 @@
             align-items: center;
             gap: 8px;
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
 
         .btn-logout {
@@ -207,6 +211,56 @@
             color: #fff;
         }
 
+        /* NAVEGACIÓN */
+        .nav-tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .tab-btn {
+            background: var(--panel);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            padding: 12px 25px;
+            border-radius: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--accent);
+            color: var(--text-light);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(139, 92, 246, 0.15));
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+        }
+
+        .view-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .card {
             background: var(--panel);
             border: 1px solid rgba(255, 255, 255, 0.06);
@@ -218,14 +272,14 @@
 </head>
 <body>
 
-    <!-- PANTALLA DE INICIO DE SESIÓN / REGISTRO -->
+    <!-- PANTALLA DE ACCESO -->
     <div class="auth-wrapper" id="authWrapper">
         <div class="auth-container">
             <div class="auth-title" id="authTitle">UPRISING RP</div>
             
             <div class="input-group">
                 <label>Correo Electrónico</label>
-                <input type="email" id="authEmail" class="input-field" placeholder="tu@correo.com">
+                <input type="email" id="authEmail" class="input-field" placeholder="usuario@uprising.com">
             </div>
 
             <div class="input-group">
@@ -241,11 +295,11 @@
         </div>
     </div>
 
-    <!-- CONTENIDO PRINCIPAL DE LA APP -->
+    <!-- PANEL PRINCIPAL -->
     <div class="app-content" id="appContent">
         <header>
             <div class="server-brand">
-                <i class="fa-solid fa-shield-halved" style="color: var(--accent); font-size: 1.5rem;"></i>
+                <i class="fa-solid fa-shield-halved" style="color: var(--accent); font-size: 1.6rem;"></i>
                 <div class="server-title">UPRISING RP</div>
             </div>
             <div class="user-economy">
@@ -255,31 +309,42 @@
             </div>
         </header>
 
-        <div class="card">
-            <h2 style="font-family: 'Orbitron'; margin-bottom: 15px; color: var(--accent);">Panel de Control en la Nube</h2>
-            <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 25px;">
-                ¡Conectado exitosamente a Firebase! Tu dinero y tus Zcoins están sincronizados en tiempo real. Puedes abrir esta misma página en tu celular o en otra computadora, iniciar sesión con tus datos, y verás tu saldo exactamente igual.
-            </p>
-            <button class="btn-cyber" style="width: auto;" onclick="addCloudReward()">Reclamar Recompensa Cloud (+1,000 $)</button>
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('home', event)"><i class="fa-solid fa-house"></i> Inicio</button>
+            <button class="tab-btn" onclick="switchTab('grow', event)"><i class="fa-solid fa-cannabis"></i> Cultivo RP</button>
+        </div>
+
+        <!-- VISTA INICIO -->
+        <div id="home" class="view-section active">
+            <div class="card">
+                <h2 style="font-family: 'Orbitron'; margin-bottom: 15px; color: var(--accent);">Sistema Sincronizado en la Nube</h2>
+                <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;">
+                    Tu cuenta está conectada a Firebase (<code>basedeserverrp</code>). Tus fondos y progresos se guardan en tiempo real y están disponibles desde cualquier dispositivo.
+                </p>
+                <button class="btn-cyber" style="width: auto;" onclick="claimDailyReward()">Reclamar Recompensa Diaria (+1,000 $)</button>
+            </div>
+        </div>
+
+        <!-- VISTA CULTIVO -->
+        <div id="grow" class="view-section">
+            <div class="card">
+                <h2 style="font-family: 'Orbitron'; margin-bottom: 15px; color: var(--accent-green);"><i class="fa-solid fa-cannabis"></i> Modulo GrowRoom</h2>
+                <p style="color: var(--text-muted); line-height: 1.6;">Próximamente: Integración del sistema de cultivo animado con sincronización directa en Firebase.</p>
+            </div>
         </div>
     </div>
 
     <script>
-        // CONFIGURACIÓN PÚBLICA DE PRUEBA FIREBASE (Lista para usar)
+        // CONFIGURACIÓN OFICIAL DE FIREBASE
         const firebaseConfig = {
-            apiKey: "AIzaSyD-TestKeyPlaceholderForUprisingRP_Demo123",
-            authDomain: "uprising-rp-system.firebaseapp.com",
-            projectId: "uprising-rp-system",
-            storageBucket: "uprising-rp-system.appspot.com",
-            messagingSenderId: "987654321000",
-            appId: "1:987654321000:web:abcdef123456789"
+            apiKey: "AIzaSyAjUmOaVoSjI_OxmETMXT6gUP6mgcDbaZ8",
+            authDomain: "basedeserverrp.firebaseapp.com",
+            projectId: "basedeserverrp",
+            storageBucket: "basedeserverrp.firebasestorage.app",
+            messagingSenderId: "248363539963",
+            appId: "1:248363539963:web:5827cb814e3acb50e77f5e"
         };
 
-        // NOTA: Para producción real con tu propia base de datos segura, 
-        // puedes registrarte gratis en console.firebase.google.com y reemplazar 
-        // el objeto "firebaseConfig" de arriba con el tuyo propio.
-
-        // Inicializar Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
@@ -288,7 +353,7 @@
 
         let isSignUp = false;
         let currentUser = null;
-        let userData = { money: 5000, zcoins: 150 };
+        let userData = { money: 10000, zcoins: 200 };
 
         function toggleAuthMode() {
             isSignUp = !isSignUp;
@@ -297,43 +362,38 @@
             document.getElementById('toggleText').innerText = isSignUp ? "¿Ya tienes cuenta? Inicia sesión" : "¿No tienes cuenta? Regístrate aquí";
         }
 
-        // Manejar autenticación (Login / Registro)
         async function handleAuth() {
             const email = document.getElementById('authEmail').value.trim();
             const password = document.getElementById('authPassword').value.trim();
 
             if (!email || !password) {
-                alert("Por favor completa todos los campos.");
+                alert("Por favor completa los campos.");
                 return;
             }
 
             try {
                 if (isSignUp) {
                     const res = await auth.createUserWithEmailAndPassword(email, password);
-                    // Crear perfil inicial en Firestore
                     await db.collection('users').doc(res.user.uid).set(userData);
                 } else {
                     await auth.signInWithEmailAndPassword(email, password);
                 }
             } catch (error) {
-                alert("Error de autenticación: " + error.message);
+                alert("Error: " + error.message);
             }
         }
 
-        // Monitorear estado de sesión en tiempo real
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 currentUser = user;
                 document.getElementById('authWrapper').style.display = 'none';
                 document.getElementById('appContent').style.display = 'block';
 
-                // Escuchar datos del usuario en Firestore
                 db.collection('users').doc(user.uid).onSnapshot((doc) => {
                     if (doc.exists) {
                         userData = doc.data();
                         updateUI();
                     } else {
-                        // Si el documento no existe por alguna razón, crearlo
                         db.collection('users').doc(user.uid).set(userData);
                     }
                 });
@@ -349,16 +409,23 @@
             document.getElementById('userZcoins').innerText = (userData.zcoins || 0).toLocaleString();
         }
 
-        async function addCloudReward() {
+        function switchTab(tabId, event) {
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        async function claimDailyReward() {
             if (!currentUser) return;
             userData.money = (userData.money || 0) + 1000;
             
-            // Actualizar en la nube de Firebase
             await db.collection('users').doc(currentUser.uid).update({ 
                 money: userData.money 
             });
 
-            confetti({ particleCount: 90, spread: 70, origin: { y: 0.5 } });
+            confetti({ particleCount: 80, spread: 60, origin: { y: 0.5 } });
         }
 
         function logout() {
