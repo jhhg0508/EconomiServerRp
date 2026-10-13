@@ -3,155 +3,577 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Sitio Increíble</title>
-    <!-- Íconos de FontAwesome -->
+    <title>Mystery Loot Box System</title>
+    <!-- FontAwesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
     <style>
-        /* Variables de Colores */
         :root {
-            --bg-dark: #0f172a;
-            --card-bg: #1e293b;
-            --accent-purple: #8b5cf6;
-            --accent-cyan: #06b6d4;
-            --text-light: #f8fafc;
-            --text-muted: #94a3b8;
+            --bg: #090a0f;
+            --panel: #12151e;
+            --accent: #00f0ff;
+            --common: #b0c3d9;
+            --rare: #4b69ff;
+            --epic: #d32ce6;
+            --legendary: #ffaa00;
+            --mythic: #ff0055;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Rajdhani', sans-serif;
+            user-select: none;
         }
 
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(211, 44, 230, 0.08) 0%, transparent 50%);
+            color: #fff;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             padding: 20px;
+            overflow-x: hidden;
         }
 
-        /* Banner Principal (Hero) */
-        .hero {
-            text-align: center;
-            max-width: 800px;
-            margin-bottom: 50px;
+        /* HEADER & STATS */
+        header {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(18, 21, 30, 0.8);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
         }
 
-        .title {
-            font-size: 3rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--accent), #d32ce6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 15px;
-            animation: fadeIn 1.5s ease-in-out;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
-        .subtitle {
-            color: var(--text-muted);
-            font-size: 1.2rem;
-            margin-bottom: 25px;
+        .user-stats {
+            display: flex;
+            gap: 20px;
         }
 
-        .btn-primary {
-            display: inline-block;
-            padding: 12px 30px;
-            border-radius: 50px;
-            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
-            color: #fff;
-            text-decoration: none;
-            font-weight: bold;
-            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
-            transition: all 0.3s ease;
+        .stat-box {
+            background: rgba(255,255,255,0.05);
+            padding: 8px 18px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 25px rgba(6, 182, 212, 0.5);
+        .stat-box i { color: var(--accent); }
+
+        /* MAIN CONTAINER */
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
         }
 
-        /* Rejilla de Tarjetas */
-        .grid-container {
+        /* BOX SELECTION */
+        .box-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
             width: 100%;
-            max-width: 1000px;
         }
 
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 16px;
+        .box-card {
+            background: var(--panel);
+            border-radius: 20px;
             padding: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.08);
             text-align: center;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            overflow: hidden;
         }
 
-        .card:hover {
-            transform: translateY(-8px);
-            border-color: var(--accent-cyan);
-            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.2);
+        .box-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0,240,255,0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
         }
 
-        .card-icon {
-            font-size: 2.5rem;
-            color: var(--accent-cyan);
-            margin-bottom: 15px;
+        .box-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px rgba(0, 240, 255, 0.2);
         }
 
-        .card h3 {
+        .box-card:hover::before { opacity: 1; }
+
+        .box-icon {
+            font-size: 4.5rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .box-card.gold .box-icon {
+            color: var(--legendary);
+            text-shadow: 0 0 20px rgba(255, 170, 0, 0.5);
+        }
+
+        .box-card.cyber .box-icon {
+            color: var(--mythic);
+            text-shadow: 0 0 20px rgba(255, 0, 85, 0.5);
+        }
+
+        .box-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
             margin-bottom: 10px;
+        }
+
+        .box-price {
+            font-size: 1.2rem;
+            color: var(--legendary);
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .btn-open {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), #0077ff);
+            color: #000;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        .btn-open:hover {
+            filter: brightness(1.2);
+            box-shadow: 0 0 15px var(--accent);
+        }
+
+        /* ROULETTE MODAL / SPINNER */
+        .spinner-container {
+            width: 100%;
+            background: var(--panel);
+            border: 2px solid var(--accent);
+            border-radius: 20px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            display: none;
+            box-shadow: 0 0 40px rgba(0, 240, 255, 0.3);
+        }
+
+        .spinner-pointer {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: var(--mythic);
+            box-shadow: 0 0 15px var(--mythic);
+            z-index: 10;
+        }
+
+        .spinner-pointer::before, .spinner-pointer::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+        }
+
+        .spinner-pointer::before {
+            top: 0;
+            border-top: 15px solid var(--mythic);
+        }
+
+        .spinner-pointer::after {
+            bottom: 0;
+            border-bottom: 15px solid var(--mythic);
+        }
+
+        .spinner-track {
+            display: flex;
+            gap: 15px;
+            transition: transform 5s cubic-bezier(0.15, 0.9, 0.2, 1);
+            will-change: transform;
+        }
+
+        .item-card {
+            min-width: 140px;
+            height: 160px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 4px solid var(--common);
+            padding: 10px;
+            text-align: center;
+            gap: 10px;
+        }
+
+        .item-card.common { border-color: var(--common); }
+        .item-card.rare { border-color: var(--rare); background: rgba(75, 105, 255, 0.1); }
+        .item-card.epic { border-color: var(--epic); background: rgba(211, 44, 230, 0.1); }
+        .item-card.legendary { border-color: var(--legendary); background: rgba(255, 170, 0, 0.1); }
+        .item-card.mythic { border-color: var(--mythic); background: rgba(255, 0, 85, 0.1); }
+
+        .item-icon { font-size: 2.5rem; }
+        .item-name { font-size: 0.9rem; font-weight: bold; }
+
+        /* INVENTORY SECTION */
+        .inventory-section {
+            width: 100%;
+            background: var(--panel);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .inventory-title {
+            font-family: 'Orbitron', sans-serif;
             font-size: 1.3rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .card p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            line-height: 1.5;
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 5px;
         }
 
-        /* Animación de entrada */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* ANIMATIONS */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* WIN MODAL */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background: var(--panel);
+            border: 2px solid var(--accent);
+            border-radius: 25px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: zoomIn 0.4s ease;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .win-icon {
+            font-size: 5rem;
+            margin: 20px 0;
+        }
+
+        .win-rarity {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Sección Principal -->
-    <section class="hero">
-        <h1 class="title">¡Bienvenido a Mi Sitio Web!</h1>
-        <p class="subtitle">Esta es una página alojada totalmente gratis con GitHub Pages y diseñada con un estilo moderno en Neón.</p>
-        <a href="#tarjetas" class="btn-primary"><i class="fa-solid fa-rocket"></i> Explorar Más</a>
-    </section>
+    <header>
+        <div class="logo"><i class="fa-solid fa-cube"></i> CyberLoot</div>
+        <div class="user-stats">
+            <div class="stat-box"><i class="fa-solid fa-coins"></i> <span id="coins">1,000</span></div>
+            <div class="stat-box" onclick="addCoins()" style="cursor:pointer;" title="Conseguir monedas"><i class="fa-solid fa-plus-circle"></i></div>
+        </div>
+    </header>
 
-    <!-- Sección de Tarjetas -->
-    <div class="grid-container" id="tarjetas">
-        <div class="card">
-            <div class="card-icon"><i class="fa-solid fa-bolt"></i></div>
-            <h3>Rápido & Gratis</h3>
-            <p>Alojado en los servidores de GitHub con certificado SSL (HTTPS) incluido sin pagar nada.</p>
+    <div class="container">
+
+        <!-- TIENDA DE CAJAS -->
+        <div class="box-grid">
+            <!-- CAJA BÁSICA -->
+            <div class="box-card">
+                <div class="box-icon"><i class="fa-solid fa-box"></i></div>
+                <div class="box-title">Caja Estándar</div>
+                <div class="box-price"><i class="fa-solid fa-coins"></i> 100</div>
+                <button class="btn-open" onclick="startSpin('standard', 100)">Abrir Caja</button>
+            </div>
+
+            <!-- CAJA ORO -->
+            <div class="box-card gold">
+                <div class="box-icon"><i class="fa-solid fa-box-open"></i></div>
+                <div class="box-title">Caja Dorada</div>
+                <div class="box-price"><i class="fa-solid fa-coins"></i> 250</div>
+                <button class="btn-open" style="background: linear-gradient(135deg, #ffaa00, #ff5500);" onclick="startSpin('gold', 250)">Abrir Caja</button>
+            </div>
+
+            <!-- CAJA CYBER -->
+            <div class="box-card cyber">
+                <div class="box-icon"><i class="fa-solid fa-vault"></i></div>
+                <div class="box-title">Caja Cyberpunk</div>
+                <div class="box-price"><i class="fa-solid fa-coins"></i> 500</div>
+                <button class="btn-open" style="background: linear-gradient(135deg, #ff0055, #9900ff); color: #fff;" onclick="startSpin('cyber', 500)">Abrir Caja</button>
+            </div>
         </div>
 
-        <div class="card">
-            <div class="card-icon"><i class="fa-solid fa-palette"></i></div>
-            <h3>Diseño Moderno</h3>
-            <p>Uso de degradados, bordes redondeados y efectos CSS interactivos para dar vida al sitio.</p>
+        <!-- RULETA DE APERTURA -->
+        <div class="spinner-container" id="spinnerContainer">
+            <div class="spinner-pointer"></div>
+            <div class="spinner-track" id="spinnerTrack"></div>
         </div>
 
-        <div class="card">
-            <div class="card-icon"><i class="fa-solid fa-mobile-screen-button"></i></div>
-            <h3>100% Responsivo</h3>
-            <p>Se adapta automáticamente a pantallas de celulares, tabletas y computadoras.</p>
+        <!-- INVENTARIO -->
+        <div class="inventory-section">
+            <div class="inventory-title"><i class="fa-solid fa-warehouse"></i> Tu Inventario (<span id="invCount">0</span>)</div>
+            <div class="inventory-grid" id="inventoryGrid">
+                <!-- Se llena dinámicamente -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL DE PREMIO -->
+    <div class="modal" id="winModal">
+        <div class="modal-content" id="modalContent">
+            <h2>¡RECOMPENSA OBTENIDA!</h2>
+            <div class="win-icon" id="winIcon"></div>
+            <div class="win-rarity" id="winRarity">Épico</div>
+            <h3 id="winName">Espada Neón</h3>
+            <button class="btn-open" style="margin-top: 25px;" onclick="closeModal()">Reclamar</button>
         </div>
     </div>
 
+    <script>
+        // BASE DE DATOS DE OBJETOS
+        const items = [
+            { id: 1, name: "Pistola de Agua", icon: "fa-gun", rarity: "common", color: "var(--common)" },
+            { id: 2, name: "Botas de Cuero", icon: "fa-socks", rarity: "common", color: "var(--common)" },
+            { id: 3, name: "Escudo de Madera", icon: "fa-shield-cat", rarity: "common", color: "var(--common)" },
+            { id: 4, name: "Rifle Laser", icon: "fa-raygun", rarity: "rare", color: "var(--rare)" },
+            { id: 5, name: "Paso de Humo", icon: "fa-shoe-prints", rarity: "rare", color: "var(--rare)" },
+            { id: 6, name: "Drone Recon", icon: "fa-drone", rarity: "epic", color: "var(--epic)" },
+            { id: 7, name: "Katana de Neón", icon: "fa-wand-magic-sparkles", rarity: "epic", color: "var(--epic)" },
+            { id: 8, name: "Moto Cyber", icon: "fa-motorcycle", rarity: "legendary", color: "var(--legendary)" },
+            { id: 9, name: "Dragón Digital", icon: "fa-dragon", rarity: "legendary", color: "var(--legendary)" },
+            { id: 10, name: "IA Consciente", icon: "fa-brain", rarity: "mythic", color: "var(--mythic)" }
+        ];
+
+        let coins = 1000;
+        let inventory = [];
+        let isSpinning = false;
+
+        // EFECTOS DE SONIDO SINTETIZADOS CON WEB AUDIO API
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playTickSound() {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.value = 400;
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+            } catch(e){}
+        }
+
+        function playWinSound() {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.5);
+            } catch(e){}
+        }
+
+        function addCoins() {
+            coins += 500;
+            document.getElementById('coins').innerText = coins.toLocaleString();
+        }
+
+        function getItemByRarity() {
+            const rand = Math.random() * 100;
+            let rarity = 'common';
+            if (rand < 2) rarity = 'mythic';
+            else if (rand < 10) rarity = 'legendary';
+            else if (rand < 25) rarity = 'epic';
+            else if (rand < 55) rarity = 'rare';
+
+            const filtered = items.filter(i => i.rarity === rarity);
+            return filtered[Math.floor(Math.random() * filtered.length)];
+        }
+
+        function startSpin(boxType, price) {
+            if (isSpinning) return;
+            if (coins < price) {
+                alert("¡No tienes suficientes monedas!");
+                return;
+            }
+
+            // Descontar monedas
+            coins -= price;
+            document.getElementById('coins').innerText = coins.toLocaleString();
+            isSpinning = true;
+
+            const spinnerContainer = document.getElementById('spinnerContainer');
+            const spinnerTrack = document.getElementById('spinnerTrack');
+            
+            spinnerContainer.style.display = 'block';
+            spinnerTrack.style.transition = 'none';
+            spinnerTrack.style.transform = 'translateX(0px)';
+
+            // Generar 60 ítems para la ruleta
+            const rouletteItems = [];
+            for (let i = 0; i < 60; i++) {
+                rouletteItems.push(getItemByRarity());
+            }
+
+            // El ítem ganador será el que quede en la posición 52
+            const winningItem = rouletteItems[52];
+
+            // Renderizar la tira de la ruleta
+            spinnerTrack.innerHTML = rouletteItems.map(item => `
+                <div class="item-card ${item.rarity}">
+                    <div class="item-icon" style="color: ${item.color}"><i class="fa-solid ${item.icon}"></i></div>
+                    <div class="item-name">${item.name}</div>
+                </div>
+            `).join('');
+
+            // Calcular el desplazamiento exacto (ancho tarjeta = 140px + gap = 15px)
+            const itemWidth = 155; 
+            const centerOffset = spinnerContainer.offsetWidth / 2 - itemWidth / 2;
+            const targetX = -(52 * itemWidth - centerOffset + (Math.random() * 60 - 30));
+
+            // Iniciar animación
+            setTimeout(() => {
+                spinnerTrack.style.transition = 'transform 5s cubic-bezier(0.1, 1, 0.1, 1)';
+                spinnerTrack.style.transform = `translateX(${targetX}px)`;
+
+                // Sonido continuo simulado
+                let ticks = 0;
+                const tickInterval = setInterval(() => {
+                    playTickSound();
+                    ticks++;
+                    if(ticks > 25) clearInterval(tickInterval);
+                }, 150);
+
+            }, 50);
+
+            // Al terminar la animación
+            setTimeout(() => {
+                isSpinning = false;
+                showWinModal(winningItem);
+                inventory.push(winningItem);
+                updateInventoryUI();
+                playWinSound();
+
+                // Confetti para premios Épicos, Legendarios o Míticos
+                if (['epic', 'legendary', 'mythic'].includes(winningItem.rarity)) {
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                }
+            }, 5200);
+        }
+
+        function showWinModal(item) {
+            const modal = document.getElementById('winModal');
+            const modalContent = document.getElementById('modalContent');
+            
+            document.getElementById('winIcon').innerHTML = `<i class="fa-solid ${item.icon}" style="color: ${item.color}"></i>`;
+            document.getElementById('winRarity').innerText = item.rarity;
+            document.getElementById('winRarity').style.color = item.color;
+            document.getElementById('winName').innerText = item.name;
+            modalContent.style.borderColor = item.color;
+
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('winModal').style.display = 'none';
+        }
+
+        function updateInventoryUI() {
+            const grid = document.getElementById('inventoryGrid');
+            document.getElementById('invCount').innerText = inventory.length;
+
+            grid.innerHTML = inventory.map(item => `
+                <div class="item-card ${item.rarity}" style="min-width: unset; height: 110px;">
+                    <div class="item-icon" style="color: ${item.color}; font-size: 1.8rem;"><i class="fa-solid ${item.icon}"></i></div>
+                    <div class="item-name" style="font-size: 0.8rem;">${item.name}</div>
+                </div>
+            `).join('');
+        }
+    </script>
 </body>
 </html>
